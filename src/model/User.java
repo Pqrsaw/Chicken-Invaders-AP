@@ -10,7 +10,7 @@ public class User {
     private boolean shotEnabled;
     private boolean crashEnabled;
     private boolean gameoverEnabled;
-    private String selectedPlane;
+    private int selectedPlane;
 
     public User(String username, String password) {
         this.username = username;
@@ -21,7 +21,7 @@ public class User {
         this.shotEnabled = true;
         this.crashEnabled = true;
         this.gameoverEnabled = true;
-        this.selectedPlane = "Default";
+        this.selectedPlane = 1;
     }
 
     // Getters and Setters
@@ -94,11 +94,11 @@ public class User {
         this.gameoverEnabled = gameoverEnabled;
     }
 
-    public String getSelectedPlane() {
+    public int getSelectedPlane() {
         return selectedPlane;
     }
 
-    public void setSelectedPlane(String selectedPlane) {
+    public void setSelectedPlane(int selectedPlane) {
         this.selectedPlane = selectedPlane;
     }
 }

@@ -36,7 +36,7 @@ public class DatabaseManager {
                 shot_enabled INTEGER DEFAULT 1,
                 crash_enabled INTEGER DEFAULT 1,
                 gameover_enabled INTEGER DEFAULT 1,
-                selected_plane TEXT DEFAULT 'Default'
+                selected_plane INTEGER DEFAULT 1
             )
             """;
 
@@ -102,7 +102,7 @@ public class DatabaseManager {
                 user.setShotEnabled(rs.getInt("shot_enabled") == 1);
                 user.setCrashEnabled(rs.getInt("crash_enabled") == 1);
                 user.setGameoverEnabled(rs.getInt("gameover_enabled") == 1);
-                user.setSelectedPlane(rs.getString("selected_plane"));
+                user.setSelectedPlane(rs.getInt("selected_plane"));
                 return user;
             }
         } catch (SQLException e) {
@@ -133,7 +133,7 @@ public class DatabaseManager {
             pstmt.setInt(4, user.isShotEnabled() ? 1 : 0);
             pstmt.setInt(5, user.isCrashEnabled() ? 1 : 0);
             pstmt.setInt(6, user.isGameoverEnabled() ? 1 : 0);
-            pstmt.setString(7, user.getSelectedPlane());
+            pstmt.setInt(7, user.getSelectedPlane());
             pstmt.setString(8, user.getUsername());
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
