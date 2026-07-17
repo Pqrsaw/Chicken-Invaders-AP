@@ -45,7 +45,7 @@ public class DatabaseManager {
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT NOT NULL,
                 score INTEGER NOT NULL,
-                level INTEGER NOT NULL,
+                last_level INTEGER NOT NULL,
                 play_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 bgm_enabled INTEGER,
                 shot_enabled INTEGER,
