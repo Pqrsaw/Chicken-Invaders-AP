@@ -21,7 +21,7 @@ public class MainMenu extends JPanel {
 
         // Title
 
-        JLabel title = new JLabel("🐔 CHICKEN INVADERS 🐔");
+        JLabel title = new JLabel(" CHICKEN INVADERS ");
         title.setFont(new Font("SansSerif", Font.BOLD, 48));
         title.setForeground(Color.YELLOW);
         title.setBackground(new Color(10, 10, 30));
