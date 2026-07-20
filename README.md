@@ -56,10 +56,10 @@ How to play :
 
 Database : 
 
-game.db => users : id (pk) / username / password / high_score / last_level /
-(sound settings)   bgm_enabled / shot_enabled / crash_enabled / gameover_enabled /
-                   selected_plane
+game.db => users        : id (pk) / username / password / high_score / last_level /
+(sound settings)        bgm_enabled / shot_enabled / crash_enabled / gameover_enabled /
+                        selected_plane
 
-    game_history : id (pk) / username / score / level / play_date /
-(sound settings)   bgm_enabled / shot_enabled / crash_enabled / gameover_enabled /
+game.db => game_history : id (pk) / username / score / level / play_date /
+(sound settings)        bgm_enabled / shot_enabled / crash_enabled / gameover_enabled /
                   
