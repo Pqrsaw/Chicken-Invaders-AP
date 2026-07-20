@@ -104,7 +104,6 @@ public abstract class Enemy {
             x += vx;
             y += vy;
 
-            // اگر دشمن Zigzag است، حرکت زیگزاگ داشته باشد
             if (this instanceof ZigzagEnemy) {
                 flyPhase += flyFrequency;
                 x += Math.sin(flyPhase) * flyAmplitude;
