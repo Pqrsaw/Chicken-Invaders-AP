@@ -9,7 +9,8 @@ import java.util.List;
 public abstract class Boss {
 
     protected int x, y;
-    protected int width, height;
+    protected int width = 150;
+    protected int height = 150;
     protected int maxHealth;
     protected int health;
     protected boolean alive;
@@ -38,7 +39,7 @@ public abstract class Boss {
 
     // Abstract methods
 
-    protected abstract void loadImage();
+    protected void loadImage() {}
 
     public abstract void update();
 
@@ -48,12 +49,17 @@ public abstract class Boss {
 
     protected abstract void drawHealthBar(Graphics2D g);
 
+    public void updateShootTimer() {
+        shootTimer += 0.016;
+    }
+
     // Takes damage
 
     public void takeDamage(int damageMultiplier) {
         health -= damageMultiplier;
         if (health <= 0) {
-            health = 0; alive = false;
+            health = 0;
+            alive = false;
         }
     }
 
@@ -64,8 +70,7 @@ public abstract class Boss {
 
         if (image != null) {
             g.drawImage(image, x, y, width, height, null);
-        }
-        else {
+        } else {
             g.setColor(new Color(200, 50, 50));
             g.fillOval(x, y, width, height);
         }

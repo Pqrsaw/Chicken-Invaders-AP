@@ -1,16 +1,18 @@
 package game.enemy;
 
+import game.Cell;
 import utils.ImageLoader;
 import java.awt.image.BufferedImage;
 
 public class NormalEnemy extends Enemy {
 
-    public NormalEnemy(int x, int y) {
-        super(x, y, "NORMAL");
+    public NormalEnemy(int x, int y, Cell cell) {
+        super(x, y, "NORMAL", cell);
         this.health = 2;
         this.maxHealth = 2;
         this.scoreValue = 10;
         this.speed = 1.0;
+        this.flySpeed = 2.5;
     }
 
     // Implementing abstract methods
@@ -21,8 +23,8 @@ public class NormalEnemy extends Enemy {
     protected void loadImage() {
         this.image = ImageLoader.loadImage("chicken/normal_chicken.png");
         if (image != null) {
-            this.width = image.getWidth();
-            this.height = image.getHeight();
+            this.width = Math.min(image.getWidth(), 35);
+            this.height = Math.min(image.getHeight(), 35);
         }
     }
 

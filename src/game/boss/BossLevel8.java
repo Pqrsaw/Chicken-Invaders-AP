@@ -7,12 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BossLevel8 extends Boss {
+
     private double yOffset;
     private double yDirection;
     private double phase;
 
     public BossLevel8() {
-        super(8, 100, 160, 160);
+        super(8, 100, 180, 180);
         this.shootInterval = 1.0;
         this.yOffset = 0;
         this.yDirection = 0.8;
@@ -28,8 +29,8 @@ public class BossLevel8 extends Boss {
     protected void loadImage() {
         this.image = ImageLoader.loadImage("chicken/boss2.png");
         if (image != null) {
-            this.width = image.getWidth();
-            this.height = image.getHeight();
+            this.width = Math.min(image.getWidth(), 180);
+            this.height = Math.min(image.getHeight(), 180);
         }
     }
 
@@ -45,27 +46,35 @@ public class BossLevel8 extends Boss {
         yOffset += yDirection * 0.8;
         if (Math.abs(yOffset) > 50) yDirection *= -1;
         y = 30 + (int)yOffset;
+
+        updateShootTimer();
     }
 
     // Draws the health bar
 
     @Override
     protected void drawHealthBar(Graphics2D g) {
-        int barWidth = 300, barHeight = 20;
-        int bx = 400 - barWidth / 2, by = 10;
+        int barWidth = 350;
+        int barHeight = 22;
+        int bx = (800 - barWidth) / 2;
+        int by = 10;
+
+        g.setColor(new Color(0, 0, 0, 180));
+        g.fillRect(bx - 3, by - 3, barWidth + 6, barHeight + 6);
 
         g.setColor(Color.DARK_GRAY);
         g.fillRect(bx, by, barWidth, barHeight);
 
         double percent = getHealthPercent();
-        Color color = percent > 0.5 ? Color.GREEN : percent > 0.25 ? Color.YELLOW : Color.RED;
+        Color color = percent > 0.5 ? new Color(0, 200, 0) :
+                percent > 0.25 ? new Color(200, 200, 0) : new Color(200, 0, 0);
         g.setColor(color);
         g.fillRect(bx, by, (int)(barWidth * percent), barHeight);
 
         g.setColor(Color.WHITE);
         g.drawRect(bx, by, barWidth, barHeight);
-        g.setFont(new Font("Arial", Font.BOLD, 14));
-        g.drawString("FINAL BOSS", bx + barWidth / 2 - 40, by + 15);
+        g.setFont(new Font("SansSerif", Font.BOLD, 14));
+        g.drawString("FINAL BOSS", bx + barWidth / 2 - 60, by + 17);
     }
 
     // Shoots eggs
@@ -73,21 +82,26 @@ public class BossLevel8 extends Boss {
     @Override
     public List<Egg> shoot() {
         List<Egg> eggs = new ArrayList<>();
-        shootTimer += 0.016;
 
         if (shootTimer >= shootInterval) {
             shootTimer = 0;
+
             double[][] directions = {
-                    {0,1}, {0,-1}, {1,0}, {-1,0},
-                    {1,1}, {-1,1}, {1,-1}, {-1,-1}
+                    {0, 1}, {0, -1}, {1, 0}, {-1, 0},
+                    {1, 1}, {-1, 1}, {1, -1}, {-1, -1}
             };
-            int cx = x + width / 2, cy = y + height / 2;
+            int cx = x + width / 2;
+            int cy = y + height / 2;
             double speed = 5.0;
+
             for (double[] dir : directions) {
                 double length = Math.sqrt(dir[0]*dir[0] + dir[1]*dir[1]);
                 eggs.add(new Egg(cx, cy, (dir[0]/length)*speed, (dir[1]/length)*speed));
             }
+
+            System.out.println("  Boss Level 8 shooting in 8 directions!");
         }
+
         return eggs;
     }
 
