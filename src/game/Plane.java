@@ -153,7 +153,7 @@ public class Plane {
                 frozen = true;
                 freezeTimer = duration * 1000;
                 activePowerUps.put("FREEZE", (long) duration);
-                System.out.println("❄️ FREEZE BOMB ACTIVATED! All enemies and eggs frozen for 3 seconds!");
+                System.out.println("  FREEZE BOMB ACTIVATED! All enemies and eggs frozen for 3 seconds!");
                 break;
             case "ADD_SHOT":
                 addShot();
