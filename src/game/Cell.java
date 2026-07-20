@@ -3,7 +3,7 @@ package game;
 public class Cell {
 
     private int x, y;
-    private String enemyType;  // "NORMAL", "FAST", "ZIGZAG", "SHOOTER"
+    private String enemyType; // "NORMAL", "FAST", "ZIGZAG", "SHOOTER"
     private int counter;
 
     public Cell(int x, int y, String enemyType, int counter) {
@@ -13,7 +13,11 @@ public class Cell {
         this.counter = counter;
     }
 
-    public void decrementCounter() { counter--; }
+    public void decrementCounter() {
+        if (counter > 0) {
+            counter--;
+        }
+    }
 
     // Getters and Setters
 
@@ -22,7 +26,9 @@ public class Cell {
     }
 
     public void setCounter(int counter) {
-        this.counter = counter;
+        if(counter >= 0) {
+            this.counter = counter;
+        }
     }
 
     public String getEnemyType() {

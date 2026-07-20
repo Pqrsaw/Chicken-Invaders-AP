@@ -20,16 +20,20 @@ public class Egg {
         this.vx = vx;
         this.vy = vy;
         this.image = ImageLoader.loadImage("chicken/egg.png");
-        if (image != null) this.radius = image.getWidth() / 2;
+        if (image != null) {
+            this.radius = Math.min(image.getWidth() / 2, 10);  // ← حداکثر 10
+        }
     }
 
     // Constructor #2
 
-    public Egg(int x, int y, String direction) { // DOWN, LEFT, RIGHT, UP
+    public Egg(int x, int y, String direction) {
         this.x = x;
         this.y = y;
         this.image = ImageLoader.loadImage("chicken/egg.png");
-        if (image != null) this.radius = image.getWidth() / 2;
+        if (image != null) {
+            this.radius = Math.min(image.getWidth() / 2, 10);  // ← حداکثر 10
+        }
 
         if (direction.equals("DOWN")) {
             this.vx = 0; this.vy = 4;
@@ -53,7 +57,7 @@ public class Egg {
     public void update() {
         x += vx;
         y += vy;
-        if (x < -20 || x > 820 || y < -20 || y > 620) active = false;
+        if (x < -30 || x > 830 || y < -30 || y > 630) active = false;
     }
 
     // Draws the egg
@@ -62,7 +66,8 @@ public class Egg {
         if (!active) return;
 
         if (image != null) {
-            g.drawImage(image, x - radius, y - radius, radius * 2, radius * 2, null);
+            int size = radius * 2;
+            g.drawImage(image, x - radius, y - radius, size, size, null);
         }
         else {
             g.setColor(Color.WHITE);
@@ -79,7 +84,7 @@ public class Egg {
     }
 
     public boolean isOffScreen(int height) {
-        return y > height + 20 || !active;
+        return y > height + 30 || !active;
     }
 
     public boolean isActive() {

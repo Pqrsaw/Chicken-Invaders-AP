@@ -12,7 +12,7 @@ public class PowerUp {
     private int width = 30;
     private int height = 30;
     private int speed = 2;
-    private String type;  // "ADD_SHOT", "BOMB", "FAST_SHOT", "FREEZE", "HEAL", "SHIELD"
+    private static String type; // "ADD_SHOT", "FAST_SHOT", "FREEZE", "HEAL", "SHIELD"
     private boolean active = true;
     private double animationTimer;
     private BufferedImage image;
@@ -30,11 +30,10 @@ public class PowerUp {
     private void loadImage() {
         String filename;
         if (type.equals("ADD_SHOT")) filename = "add_shot.png";
-        else if (type.equals("BOMB")) filename = "bomb_shot.png";
-        else if (type.equals("FAST_SHOT")) filename = "fast_shot.png";
-        else if (type.equals("FREEZE")) filename = "freeze.png";
-        else if (type.equals("HEAL")) filename = "heal.png";
+        else if (type.equals("RAPID_FIRE")) filename = "fast_shot.png";
+        else if (type.equals("EXTRA_LIFE")) filename = "heal.png";
         else if (type.equals("SHIELD")) filename = "shield.png";
+        else if (type.equals("FREEZE")) filename = "freeze.png";
         else filename = "add_shot.png";
 
         this.image = ImageLoader.loadImage("powerup1/" + filename);
@@ -42,8 +41,8 @@ public class PowerUp {
             this.image = ImageLoader.loadImage("powerup2/" + filename);
         }
         if (this.image != null) {
-            this.width = this.image.getWidth();
-            this.height = this.image.getHeight();
+            this.width = Math.min(image.getWidth(), 35);
+            this.height = Math.min(image.getHeight(), 35);
         }
     }
 
@@ -51,9 +50,57 @@ public class PowerUp {
 
     public static PowerUp randomPowerUp(int x, int y) {
         Random rand = new Random();
-        String[] types = {"ADD_SHOT", "BOMB", "FAST_SHOT", "FREEZE", "HEAL", "SHIELD"};
+        String[] types = {"ADD_SHOT", "RAPID_FIRE", "EXTRA_LIFE", "SHIELD", "FREEZE"};
         String type = types[rand.nextInt(types.length)];
         return new PowerUp(x, y, type);
+    }
+
+    // Displays the power up name for the top right of HUD
+
+    public static String getDisplayName(String type) {
+        switch (type) {
+            case "ADD_SHOT": return "ADD FIRE";
+            case "RAPID_FIRE": return "RAPID FIRE";
+            case "EXTRA_LIFE": return "EXTRA LIFE";
+            case "SHIELD": return "SHIELD";
+            case "FREEZE": return "FREEZE BOMB";
+            default: return type;
+        }
+    }
+
+    // Returns the color assigned to the power up
+
+    public static Color getColor(String type) {
+        switch (type) {
+            case "ADD_SHOT": return new Color(0, 200, 255);
+            case "RAPID_FIRE": return new Color(255, 200, 0);
+            case "EXTRA_LIFE": return new Color(0, 255, 100);
+            case "SHIELD": return new Color(100, 200, 255);
+            case "FREEZE": return new Color(0, 150, 255);
+            default: return Color.WHITE;
+        }
+    }
+
+    // Applies the power up effect
+
+    public void applyEffect(Plane plane) {
+        switch (type) {
+            case "ADD_SHOT":
+                plane.activatePowerUp("ADD_SHOT", -1);
+                break;
+            case "RAPID_FIRE":
+                plane.activatePowerUp("RAPID_FIRE", 8);
+                break;
+            case "EXTRA_LIFE":
+                plane.addLife();
+                break;
+            case "SHIELD":
+                plane.activatePowerUp("SHIELD", 10);
+                break;
+            case "FREEZE":
+                plane.activatePowerUp("FREEZE", 3);
+                break;
+        }
     }
 
     // Updates the position
@@ -77,49 +124,26 @@ public class PowerUp {
             g.drawImage(image, x - pulse, y - pulse, width + pulse * 2, height + pulse * 2, null);
         }
         else {
-            g.setColor(getColor());
+            g.setColor(getColor(type));
             g.fillOval(x, y, width, height);
             g.setColor(Color.WHITE);
-            g.setFont(new Font("Arial", Font.BOLD, 14));
+            g.setFont(new Font("SansSerif", Font.BOLD, 16));
             String symbol = getSymbol();
             FontMetrics fm = g.getFontMetrics();
-            g.drawString(symbol, x + (width - fm.stringWidth(symbol)) / 2, y + (height + fm.getAscent()) / 2 - 2);
+            g.drawString(symbol, x + (width - fm.stringWidth(symbol)) / 2,
+                    y + (height + fm.getAscent()) / 2 - 2);
         }
     }
 
-    // Returns the color of each power up
-
-    private Color getColor() {
-        if (type.equals("ADD_SHOT")) return new Color(0, 200, 255);
-        else if (type.equals("BOMB")) return new Color(255, 100, 0);
-        else if (type.equals("FAST_SHOT")) return new Color(255, 255, 0);
-        else if (type.equals("FREEZE")) return new Color(0, 200, 255);
-        else if (type.equals("HEAL")) return new Color(0, 255, 100);
-        else if (type.equals("SHIELD")) return new Color(100, 200, 255);
-        else return Color.WHITE;
-    }
-
-    // Returns the symbol of each power up
+    // Returns the Symbol assigned to the power up
 
     private String getSymbol() {
         if (type.equals("ADD_SHOT")) return "+";
-        else if (type.equals("BOMB")) return "B";
-        else if (type.equals("FAST_SHOT")) return "F";
-        else if (type.equals("FREEZE")) return "❄";
-        else if (type.equals("HEAL")) return "♥";
+        else if (type.equals("RAPID_FIRE")) return "F";
+        else if (type.equals("EXTRA_LIFE")) return "♥";
         else if (type.equals("SHIELD")) return "S";
+        else if (type.equals("FREEZE")) return "❄";
         else return "?";
-    }
-
-    // Applies the power up effect
-
-    public void applyEffect(Plane plane) {
-        if (type.equals("ADD_SHOT")) plane.addShot();
-        else if (type.equals("BOMB")) { /* Bomb effect */ }
-        else if (type.equals("FAST_SHOT")) plane.activateRapidFire(8);
-        else if (type.equals("FREEZE")) plane.freeze();
-        else if (type.equals("HEAL")) plane.addLife();
-        else if (type.equals("SHIELD")) plane.activateShield(10);
     }
 
     // Getters and Setters
@@ -134,6 +158,10 @@ public class PowerUp {
 
     public boolean isActive() {
         return active;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public int getX() {

@@ -6,17 +6,19 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Plane {
 
     private int x, y;
-    private int width = 40;
-    private int height = 50;
+    private int width = 50;
+    private int height = 60;
     private int speed;
     private int lives;
     private int maxLives = 5;
     private int shotCount;
-    private int maxShots = 5;
+    private int maxShots = 10;
     private long fireRate;
     private long lastShotTime;
     private boolean shieldActive;
@@ -25,6 +27,8 @@ public class Plane {
     private long rapidFireTimer;
     private boolean frozen;
     private long freezeTimer;
+
+    private Map<String, Long> activePowerUps = new HashMap<>();
 
     private boolean movingLeft, movingRight, movingUp, movingDown;
     private BufferedImage planeImage;
@@ -35,13 +39,14 @@ public class Plane {
 
     public Plane(int planeNumber) {
         this.x = PANEL_WIDTH / 2 - width / 2;
-        this.y = PANEL_HEIGHT - 100;
+        this.y = PANEL_HEIGHT - 120;
         this.lives = 3;
         this.shotCount = 1;
         this.fireRate = 300;
         this.lastShotTime = 0;
         this.shieldActive = false;
         this.rapidFireActive = false;
+        this.frozen = false;
 
         loadImages(planeNumber);
         setPlaneProperties(planeNumber);
@@ -52,13 +57,17 @@ public class Plane {
     private void loadImages(int planeNumber) {
         planeImage = ImageLoader.loadImage("airplan/" + planeNumber + ".png");
         if (planeImage != null) {
-            this.width = planeImage.getWidth();
-            this.height = planeImage.getHeight();
+            this.width = Math.min(planeImage.getWidth(), 60);
+            this.height = Math.min(planeImage.getHeight(), 70);
+        }
+        else {
+            this.width = 50;
+            this.height = 60;
         }
         bulletImage = ImageLoader.loadImage("airplan/shot.png");
     }
 
-    // Sets attributes of the plane
+    // Sets attributes of the plane (StorePanel)
 
     private void setPlaneProperties(int planeNumber) {
         switch (planeNumber) {
@@ -83,14 +92,73 @@ public class Plane {
         x = Math.max(0, Math.min(x, PANEL_WIDTH - width));
         y = Math.max(0, Math.min(y, PANEL_HEIGHT - height));
 
+        updatePowerUpTimers();
+    }
+
+    // Updates timer of power up durations
+
+    private void updatePowerUpTimers() {
         if (shieldActive) {
             shieldTimer -= 16;
-            if (shieldTimer <= 0) shieldActive = false;
+            if (shieldTimer <= 0) {
+                shieldActive = false;
+                activePowerUps.remove("SHIELD");
+            } else {
+                activePowerUps.put("SHIELD", shieldTimer / 1000);
+            }
         }
 
         if (rapidFireActive) {
             rapidFireTimer -= 16;
-            if (rapidFireTimer <= 0) rapidFireActive = false;
+            if (rapidFireTimer <= 0) {
+                rapidFireActive = false;
+                activePowerUps.remove("RAPID_FIRE");
+            } else {
+                activePowerUps.put("RAPID_FIRE", rapidFireTimer / 1000);
+            }
+        }
+
+        if (frozen) {
+            freezeTimer -= 16;
+            if (freezeTimer <= 0) {
+                frozen = false;
+                activePowerUps.remove("FREEZE");
+            } else {
+                activePowerUps.put("FREEZE", freezeTimer / 1000);
+            }
+        }
+
+        if (shotCount > 1) {
+            activePowerUps.put("ADD_SHOT", 0L);
+        } else {
+            activePowerUps.remove("ADD_SHOT");
+        }
+    }
+
+    // Activates the collected power up ability
+
+    public void activatePowerUp(String type, int duration) {
+        switch (type) {
+            case "SHIELD":
+                shieldActive = true;
+                shieldTimer = duration * 1000;
+                activePowerUps.put("SHIELD", (long) duration);
+                break;
+            case "RAPID_FIRE":
+                rapidFireActive = true;
+                rapidFireTimer = duration * 1000;
+                activePowerUps.put("RAPID_FIRE", (long) duration);
+                break;
+            case "FREEZE":
+                frozen = true;
+                freezeTimer = duration * 1000;
+                activePowerUps.put("FREEZE", (long) duration);
+                System.out.println("❄️ FREEZE BOMB ACTIVATED! All enemies and eggs frozen for 3 seconds!");
+                break;
+            case "ADD_SHOT":
+                addShot();
+                activePowerUps.put("ADD_SHOT", 0L);
+                break;
         }
     }
 
@@ -103,14 +171,14 @@ public class Plane {
 
         if (currentTime - lastShotTime >= effectiveFireRate) {
             lastShotTime = currentTime;
+
             int currentShots = rapidFireActive ? shotCount * 2 : shotCount;
             currentShots = Math.min(currentShots, maxShots);
 
             if (currentShots == 1) {
-                bullets.add(new Bullet(x + width / 2 - 3, y - 10, bulletImage));
-            }
-            else {
-                int spacing = 10;
+                bullets.add(new Bullet(x + width / 2 - 4, y - 10, bulletImage));
+            } else {
+                int spacing = 12;
                 int startX = x + width / 2 - ((currentShots - 1) * spacing) / 2;
                 for (int i = 0; i < currentShots; i++) {
                     bullets.add(new Bullet(startX + i * spacing, y - 10, bulletImage));
@@ -149,18 +217,21 @@ public class Plane {
         rapidFireTimer = duration * 1000;
     }
 
-    public void freeze() {
+    public void activateFreeze(int duration) {
         frozen = true;
-        freezeTimer = 3000;
+        freezeTimer = duration * 1000;
     }
 
     // Draws the plane
 
     public void draw(Graphics2D g) {
+
+        // Draws the shield if activated
+
         if (shieldActive) {
-            g.setColor(new Color(0, 200, 255, 50));
+            g.setColor(new Color(0, 200, 255, 80));
             g.fillOval(x - 10, y - 10, width + 20, height + 20);
-            g.setColor(new Color(0, 200, 255, 100));
+            g.setColor(new Color(0, 200, 255, 150));
             g.drawOval(x - 10, y - 10, width + 20, height + 20);
         }
 
@@ -168,6 +239,9 @@ public class Plane {
             g.drawImage(planeImage, x, y, width, height, null);
         }
         else {
+
+            // If we could not load the images, draws the plane from scratch
+
             g.setColor(Color.GREEN);
             g.fillRect(x + 10, y, 20, 15);
             g.fillRect(x + 15, y + 15, 10, 30);
@@ -184,6 +258,22 @@ public class Plane {
         return new Rectangle(x, y, width, height);
     }
 
+    public Map<String, Long> getActivePowerUps() {
+        return activePowerUps;
+    }
+
+    public boolean isFrozen() {
+        return frozen;
+    }
+
+    public boolean isShieldActive() {
+        return shieldActive;
+    }
+
+    public boolean isRapidFireActive() {
+        return rapidFireActive;
+    }
+
     public int getX() {
         return x;
     }
@@ -198,14 +288,6 @@ public class Plane {
 
     public int getShotCount() {
         return shotCount;
-    }
-
-    public boolean isShieldActive() {
-        return shieldActive;
-    }
-
-    public boolean isRapidFireActive() {
-        return rapidFireActive;
     }
 
     public int getDamageMultiplier() {
