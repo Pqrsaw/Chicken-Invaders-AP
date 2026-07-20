@@ -174,11 +174,12 @@ public class DatabaseManager {
             SELECT 
                 username, 
                 MAX(score) as high_score, 
-                last_level, 
+                level, 
                 MAX(play_date) as latest_date 
             FROM game_history 
             GROUP BY username 
             ORDER BY high_score DESC 
+            LIMIT 10
             """;
 
         try (Statement stmt = connection.createStatement();
@@ -187,7 +188,7 @@ public class DatabaseManager {
                 String[] row = new String[4];
                 row[0] = rs.getString("username");
                 row[1] = String.valueOf(rs.getInt("high_score"));
-                row[2] = String.valueOf(rs.getInt("last_level"));
+                row[2] = String.valueOf(rs.getInt("level"));
                 row[3] = rs.getString("latest_date");
                 scores.add(row);
             }

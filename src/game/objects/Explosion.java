@@ -21,9 +21,9 @@ public class Explosion {
         this.x = x;
         this.y = y;
         this.radius = 5;
-        this.maxRadius = 50;
+        this.maxRadius = 60;
         this.life = 0;
-        this.maxLife = 20;
+        this.maxLife = 25;
         this.finished = false;
         this.frame = 0;
         this.frameTimer = 0;
@@ -38,36 +38,38 @@ public class Explosion {
         life++;
         radius = 5 + (life * (maxRadius - 5) / maxLife);
         frameTimer++;
-        if (frameTimer > 3) {
+        if (frameTimer > 4) {
             frameTimer = 0;
             frame = (frame + 1) % 2;
         }
         if (life >= maxLife) finished = true;
     }
 
-    // Draws the bomb
+    // Draws the explosion
 
     public void draw(Graphics2D g) {
         if (finished) return;
 
         if (image1 != null && image2 != null) {
             BufferedImage currentImage = (frame == 0) ? image1 : image2;
-            int size = 20 + life * 2;
+            int size = 30 + life * 3;
             g.drawImage(currentImage, x - size/2, y - size/2, size, size, null);
         }
         else {
             float alpha = 1.0f - (float)life / maxLife;
-            for (int i = 0; i < 20; i++) {
+            int numParticles = 25;
+
+            for (int i = 0; i < numParticles; i++) {
                 double angle = Math.random() * Math.PI * 2;
                 double distance = Math.random() * radius;
                 int px = x + (int)(distance * Math.cos(angle));
                 int py = y + (int)(distance * Math.sin(angle));
-                int size = 5 + (int)(Math.random() * 10);
-                Color color = new Color(255, 150 + (int)(Math.random() * 105),
-                        50 + (int)(Math.random() * 50), (int)(alpha * 255));
+                int size = 5 + (int)(Math.random() * 12);
+                Color color = new Color(255, 150 + (int)(Math.random() * 105), 50 + (int)(Math.random() * 50), (int)(alpha * 255));
                 g.setColor(color);
                 g.fillOval(px - size/2, py - size/2, size, size);
             }
+
             g.setColor(new Color(255, 255, 255, (int)(alpha * 200)));
             g.fillOval(x - radius/4, y - radius/4, radius/2, radius/2);
         }

@@ -12,7 +12,7 @@ public class BossLevel4 extends Boss {
     private double yDirection;
 
     public BossLevel4() {
-        super(4, 50, 120, 120);
+        super(4, 50, 150, 150);
         this.shootInterval = 1.5;
         this.yOffset = 0;
         this.yDirection = 0.5;
@@ -27,8 +27,8 @@ public class BossLevel4 extends Boss {
     protected void loadImage() {
         this.image = ImageLoader.loadImage("chicken/boss1.png");
         if (image != null) {
-            this.width = image.getWidth();
-            this.height = image.getHeight();
+            this.width = Math.min(image.getWidth(), 150);
+            this.height = Math.min(image.getHeight(), 150);
         }
     }
 
@@ -43,27 +43,35 @@ public class BossLevel4 extends Boss {
         yOffset += yDirection * 0.5;
         if (Math.abs(yOffset) > 30) yDirection *= -1;
         y = 50 + (int)yOffset;
+
+        updateShootTimer();
     }
 
     // Draws the health bar
 
     @Override
     protected void drawHealthBar(Graphics2D g) {
-        int barWidth = 200, barHeight = 15;
-        int bx = 400 - barWidth / 2, by = 20;
+        int barWidth = 250;
+        int barHeight = 18;
+        int bx = (800 - barWidth) / 2;
+        int by = 15;
+
+        g.setColor(new Color(0, 0, 0, 150));
+        g.fillRect(bx - 2, by - 2, barWidth + 4, barHeight + 4);
 
         g.setColor(Color.DARK_GRAY);
         g.fillRect(bx, by, barWidth, barHeight);
 
         double percent = getHealthPercent();
-        Color color = percent > 0.5 ? Color.GREEN : percent > 0.25 ? Color.YELLOW : Color.RED;
+        Color color = percent > 0.5 ? new Color(0, 200, 0) :
+                percent > 0.25 ? new Color(200, 200, 0) : new Color(200, 0, 0);
         g.setColor(color);
         g.fillRect(bx, by, (int)(barWidth * percent), barHeight);
 
         g.setColor(Color.WHITE);
         g.drawRect(bx, by, barWidth, barHeight);
-        g.setFont(new Font("Arial", Font.BOLD, 12));
-        g.drawString("BOSS LEVEL 4", bx + 50, by + 12);
+        g.setFont(new Font("SansSerif", Font.BOLD, 12));
+        g.drawString("BOSS LEVEL 4", bx + barWidth / 2 - 50, by + 14);
     }
 
     // Shoots eggs
@@ -71,16 +79,22 @@ public class BossLevel4 extends Boss {
     @Override
     public List<Egg> shoot() {
         List<Egg> eggs = new ArrayList<>();
-        shootTimer += 0.016;
 
         if (shootTimer >= shootInterval) {
             shootTimer = 0;
-            double[][] directions = {{0,1}, {0,-1}, {1,0}, {-1,0}};
-            int cx = x + width / 2, cy = y + height / 2;
+
+            double[][] directions = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+            int cx = x + width / 2;
+            int cy = y + height / 2;
+            double speed = 4.0;
+
             for (double[] dir : directions) {
-                eggs.add(new Egg(cx, cy, dir[0] * 4.0, dir[1] * 4.0));
+                eggs.add(new Egg(cx, cy, dir[0] * speed, dir[1] * speed));
             }
+
+            System.out.println("  Boss Level 4 shooting in 4 directions!");
         }
+
         return eggs;
     }
 

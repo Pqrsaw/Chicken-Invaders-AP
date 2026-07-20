@@ -12,6 +12,7 @@ public class SoundManager {
     private boolean shotEnabled = true;
     private boolean crashEnabled = true;
     private boolean gameoverEnabled = true;
+    private boolean isMusicPlaying = false;
 
     public SoundManager() {
         soundClips = new HashMap<>();
@@ -66,22 +67,41 @@ public class SoundManager {
     }
 
     public void playBackgroundMusic() {
-        playSound("main_theme");
+        if (!isMusicPlaying) {
+            playSound("main_theme");
+            isMusicPlaying = true;
+        }
     }
 
     public void playInGameMusic() {
-        playSound("main_theme");
+        if (!isMusicPlaying) {
+            playSound("main_theme");
+            isMusicPlaying = true;
+        }
     }
 
     public void playEndingMusic() {
-        playSound("ending_theme");
+        if (!isMusicPlaying) {
+            playSound("ending_theme");
+            isMusicPlaying = true;
+        }
     }
 
     public void stopBackgroundMusic() {
         Clip clip = soundClips.get("main_theme");
         if (clip != null && clip.isRunning()) {
             clip.stop();
+            isMusicPlaying = false;
         }
+    }
+
+    public void stopAllMusic() {
+        for (Clip clip : soundClips.values()) {
+            if (clip != null && clip.isRunning()) {
+                clip.stop();
+            }
+        }
+        isMusicPlaying = false;
     }
 
     public void playShotSound() {
@@ -105,7 +125,7 @@ public class SoundManager {
     public void setMusicEnabled(boolean enabled) {
         this.musicEnabled = enabled;
         if (!enabled) {
-            stopBackgroundMusic();
+            stopAllMusic();
         }
         else {
             playBackgroundMusic();
