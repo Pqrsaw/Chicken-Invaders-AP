@@ -21,7 +21,7 @@ public class Egg {
         this.vy = vy;
         this.image = ImageLoader.loadImage("chicken/egg.png");
         if (image != null) {
-            this.radius = Math.min(image.getWidth() / 2, 10);  // ← حداکثر 10
+            this.radius = Math.min(image.getWidth() / 2, 10);
         }
     }
 
@@ -32,7 +32,7 @@ public class Egg {
         this.y = y;
         this.image = ImageLoader.loadImage("chicken/egg.png");
         if (image != null) {
-            this.radius = Math.min(image.getWidth() / 2, 10);  // ← حداکثر 10
+            this.radius = Math.min(image.getWidth() / 2, 10);
         }
 
         if (direction.equals("DOWN")) {
