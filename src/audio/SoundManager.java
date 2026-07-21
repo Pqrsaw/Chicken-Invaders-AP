@@ -23,12 +23,12 @@ public class SoundManager {
 
     private void loadSounds() {
 
-        loadSound("shot", "sound-effects/mixkit-short-laser-gun-shot-1670.wav");
-        loadSound("explosion", "sound-effects/mixkit-epic-impact-afar-explosion-2782.wav");
-        loadSound("gameover", "sound-effects/mixkit-retro-arcade-game-over-470.wav");
-        loadSound("powerup", "sound-effects/mixkit-short-laser-gun-shot-1670.wav");
-        loadSound("main_theme", "sound-effects/Chicken Invaders 2 Remastered OST - Main Theme.wav");
-        loadSound("ending_theme", "sound-effects/Chicken Invaders 2 Remastered OST - Ending Theme.wav");
+        loadSound("shot", "resources/sound-effects/mixkit-short-laser-gun-shot-1670.wav");
+        loadSound("explosion", "resources/sound-effects/mixkit-epic-impact-afar-explosion-2782.wav");
+        loadSound("gameover", "resources/sound-effects/mixkit-retro-arcade-game-over-470.wav");
+        loadSound("powerup", "resources/sound-effects/mixkit-short-laser-gun-shot-1670.wav");
+        loadSound("main_theme", "resources/sound-effects/Chicken Invaders 2 Remastered OST - Main Theme.wav");
+        loadSound("ending_theme", "resources/sound-effects/Chicken Invaders 2 Remastered OST - Ending Theme.wav");
     }
 
     private void loadSound(String name, String path) {

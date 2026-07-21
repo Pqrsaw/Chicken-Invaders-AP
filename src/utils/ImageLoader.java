@@ -17,7 +17,7 @@ public class ImageLoader {
             return cache.get(path);
         }
         try {
-            File file = new File(path);
+            File file = new File("resources/" + path);
             if (file.exists()) {
                 BufferedImage image = ImageIO.read(file);
                 cache.put(path, image);
